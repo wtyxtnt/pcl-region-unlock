@@ -4,26 +4,9 @@
 
 ## 工作原理
 
-PCL CE 通过 `PCL.Core/App/Region/RegionPolicy.cs` 判断所在地区，命中后禁用下载相关功能。判定读取四个 Windows 信号，本插件把这四个信号改写掉：
+启动器在受限地区会禁用下载相关功能。本插件是一个 `dwmapi.dll` 代理，随启动器加载后把地区判定读取的 Windows 信号改写为其他地区，使判定放行。
 
-| 信号 | 来源 | 改写为 |
-|---|---|---|
-| 国家/地区代码 | `GetUserDefaultGeoName` | `US` |
-| 设备区域 | 注册表 `Control Panel\DeviceRegion` | 不可读 |
-| 用户区域 | `GetUserDefaultLocaleName` | `en-US` |
-| 首选 UI 语言 | `GetUserPreferredUILanguages` | `en-US` |
-
-四个信号改写后，`RegionPolicy.Evaluate` 走 `geo-other` 分支返回 `Other`，`IsRestricted` 为 `false`，下载、补全、整合包安装放行。
-
-实现方式是 `dwmapi.dll` 代理：
-
-- `dwmapi.dll` 不在 KnownDLLs 中，且被启动器以 `[LibraryImport("dwmapi.dll")]` 按名加载（`PCL.Core/Utils/OS/WindowInterop.cs`），窗口初始化时即触发，早于任何下载操作。
-- 代理导出 `DwmIsCompositionEnabled`、`DwmExtendFrameIntoClientArea` 等函数，全部转发给 `System32` 的真实实现，窗口效果不受影响。
-- 首次转发调用时安装四个钩子（函数入口写入绝对跳转）。不在 `DllMain` 中做加载器操作，避免锁死。
-- 补丁不引用启动器的类型名、方法名、RVA 或 IL 偏移，因此启动器版本更新后无需适配。
-- 加载时置位 `SEM_FAILCRITICALERRORS`，静音加载器的模态错误框。
-
-只影响区域判定，不改动下载源、鉴权、更新逻辑，也不改动启动器文件。
+只影响地区判定，不改动启动器文件，也不改动下载源与更新逻辑。
 
 ## 支持的版本
 
@@ -61,4 +44,3 @@ PCL CE 通过 `PCL.Core/App/Region/RegionPolicy.cs` 判断所在地区，命中�
 ## 许可证
 
 本项目使用 [GNU General Public License v3.0](LICENSE) 授权。
-
