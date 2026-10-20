@@ -1,0 +1,15 @@
+# 源码
+native/target/
+
+# 本地验证工程：不进仓库
+tests/
+
+# 构建产物（二进制走 GitHub Releases）
+dist/
+publish/
+*.pdb
+
+# 编辑器
+.vs/
+.idea/
+*.user

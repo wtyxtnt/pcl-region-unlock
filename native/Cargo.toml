@@ -1,0 +1,17 @@
+[package]
+name = "pcl-region-unlock"
+version = "0.1.0"
+edition = "2021"
+description = "Proxy dwmapi.dll that removes the regional download restriction in PCL CE"
+
+[lib]
+name = "dwmapi"
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[profile.release]
+panic = "abort"
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
