@@ -57,3 +57,8 @@ PCL CE 通过 `PCL.Core/App/Region/RegionPolicy.cs` 判断所在地区，命中�
 
 ## 注
 - 本项目经测试无法在PCL使用 适用范围仅限于PCL CE。
+
+## 许可证
+
+本项目使用 [GNU General Public License v3.0](LICENSE) 授权。
+
